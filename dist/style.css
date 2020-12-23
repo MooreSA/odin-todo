@@ -1,0 +1,64 @@
+body {
+    color: #ffddee;
+    margin: 0;
+}
+
+/* nav  */
+
+.nav-col {
+    background-color: #300f30;
+}
+
+.btn-new-project {
+    width: 100%;
+    margin: 15px auto;
+    background-color: #b28da8;
+    color: #300f30;
+}
+
+.btn-new-project:hover {
+    color: #cfc3eb;
+}
+
+.project {
+    color: #cfc3eb;
+    border-radius: 15px;
+    margin-bottom: 5px;
+}
+
+.project:hover, .project-active {
+    background-color: #cfc3eb;
+    color: #300f30;
+}
+
+.project-active:hover {
+    box-shadow: 0px 0px 2px 2px #b28da8;
+}
+
+/* content header */
+
+.content-col {
+    background-color: #5b2850;
+}
+
+.btn-edit {
+    background-color: #744669;
+    color: #300f30;
+}
+
+.btn-edit:hover {
+    color: #cfc3eb;   
+}
+
+/* todos */
+
+.todo {
+    height: 50px;
+    margin: 10px auto;
+    border: 1px solid #502247;
+    border-radius: 15px;
+}
+
+.todo:hover {
+    box-shadow: 0px 0px 14px 0px rgba(48,15,48,0.75);
+}
