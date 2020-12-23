@@ -29,7 +29,7 @@ export class Todo {
         this.description = todoInfo.description;
         this.priority = todoInfo.priority;
         this.dueDate = todoInfo.dueDate;
-        this.active = todoInfo.active;
+        this.active = true;
         this.id = Todo.generateId();
     }
 

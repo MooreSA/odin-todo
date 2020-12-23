@@ -13,9 +13,11 @@ function firstLoad() {
 function addButtonListeners() {
     const newProjBtn = document.querySelector('#btn-new-project');
     const editProjBtn = document.querySelector('#btn-edit-project');
+    const submitTodoBtn = document.querySelector('#btn-submit-todo');
 
     newProjBtn.addEventListener('click', displayNewProjectForm);
     editProjBtn.addEventListener('click', displayEditProjectForm);
+    submitTodoBtn.addEventListener('click', createTodo)
 }
 
 function getActiveProject() {
@@ -75,7 +77,7 @@ function createProjectForm(title = "New Project", description = "Description", e
     titleLabel.classList.add('form-label', 'mt-3');
     descLabel.classList.add('form-label', 'mt-3');
     submitBtn.classList.add('btn', 'btn-success', 'mt-3');
-    if (title != undefined && description != undefined) {
+    if (editFlag) {
         titleInput.value = title;
         descInput.value = description;
     }
@@ -211,7 +213,7 @@ function addProjectInfo(title, description) {
     projDesc.textContent = description;
 }
 
-function createTodo(todo) {
+function displayTodo(todo) {
     const rowElem = document.createElement('div');
     const wrapper = document.createElement('div');
     const checkBox = document.createElement('input');
@@ -248,9 +250,46 @@ function addTodos(todos) {
 
     for (let i = 0; i < todos.length; i++) {
         const todo = todos[i];
-        const todoElement = createTodo(todo);
+        const todoElement = displayTodo(todo);
         todoWrapper.appendChild(todoElement);
     }
+
+    todoWrapper.appendChild(createTodoBtn());
+}
+
+function createTodoBtn() {
+    const btnWrapper = document.createElement('div');
+    const todoBtn = document.createElement('button');
+
+    btnWrapper.classList.add('row');
+    todoBtn.classList.add('btn', 'btn-new-todo', 'col-3');
+
+    todoBtn.textContent = "Add Todo";
+    todoBtn.dataset.bsToggle = "modal";
+    todoBtn.dataset.bsTarget = "#todo-modal";
+
+    btnWrapper.appendChild(todoBtn);
+
+    return btnWrapper;
+}
+
+function createTodo() {
+    const todoInfo = getTodoInfo();
+    const project = getActiveProject();
+
+    project.addTodo(todoInfo);
+    clearTodos();
+    addTodos(project.todos);
+}
+
+function getTodoInfo() {
+    const todoInfo = {
+        title: document.querySelector('#todo-title').value,
+        description: document.querySelector('#todo-description').value,
+        priority: document.querySelector('#todo-priority').value,
+        dueDate: document.querySelector('#todo-date').value
+    }
+    return todoInfo;
 }
 
 

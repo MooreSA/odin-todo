@@ -41,12 +41,12 @@ body {
     background-color: #5b2850;
 }
 
-.btn-edit {
+.btn-edit, .btn-new-todo {
     background-color: #744669;
     color: #300f30;
 }
 
-.btn-edit:hover {
+.btn-edit:hover, .btn-new-todo {
     color: #cfc3eb;   
 }
 
@@ -61,4 +61,13 @@ body {
 
 .todo:hover {
     box-shadow: 0px 0px 14px 0px rgba(48,15,48,0.75);
+}
+
+.btn-new-todo {
+    margin: 10px auto;
+}
+
+/* todoModal */
+#todo-modal {
+    color: black;
 }
