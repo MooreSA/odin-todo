@@ -21,14 +21,24 @@ export class Project {
         this.title = title;
         this.description = description;
     }
+
+    getTodo(todoId) {
+        for (let i = 0; i < this.todos.length; i++) {
+            if (this.todos[i].id === parseInt(todoId)) {
+                return this.todos[i]
+            }
+        }
+        return false;
+    }
 }
 
 export class Todo {
     constructor(todoInfo) {
+        console.log(todoInfo);
         this.title = todoInfo.title;
         this.description = todoInfo.description;
         this.priority = todoInfo.priority;
-        this.dueDate = todoInfo.dueDate;
+        this.dueDate = new Date(todoInfo.dueDate);
         this.active = true;
         this.id = Todo.generateId();
     }
@@ -43,8 +53,11 @@ export class Todo {
         this.title = todoInfo.title;
         this.description = todoInfo.description;
         this.priority = todoInfo.priority;
-        this.dueDate = todoInfo.dueDate;
-        this.active = todoInfo.active;
+        this.dueDate = new Date(todoInfo.dueDate);
+    }
+
+    toggleActive() {
+        this.active = !this.active;
     }
 }
 

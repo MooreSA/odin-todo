@@ -59,6 +59,19 @@ body {
     border-radius: 15px;
 }
 
+.todo-inactive > * {
+    text-decoration: line-through;
+    color: #744669;
+}
+
+.todo > * {
+    padding: 10px;
+}
+
+.todo-title {
+    font-weight: bold;
+}
+
 .todo:hover {
     box-shadow: 0px 0px 14px 0px rgba(48,15,48,0.75);
 }
@@ -70,4 +83,8 @@ body {
 /* todoModal */
 #todo-modal {
     color: black;
+}
+
+.hidden {
+    display: none;
 }

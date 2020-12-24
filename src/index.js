@@ -31,13 +31,13 @@ const exampleTodoOne = {
 const exampleTodoTwo = {
     title: 'example2',
     description: 'example 2 desc',
-    priority: 0,
+    priority: 2,
     dueDate: '03-20-1995',
     active: true
 }
 
-projects[1].addTodo(exampleTodoOne);
-projects[1].addTodo(exampleTodoTwo);
+projects[0].addTodo(exampleTodoOne);
+projects[0].addTodo(exampleTodoTwo);
 
 firstLoad();
 

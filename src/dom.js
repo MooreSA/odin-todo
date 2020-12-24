@@ -1,4 +1,5 @@
 import {getProjects, createProject } from "./index";
+import { format, parseISO } from "date-fns"
 
 function firstLoad() {
     const projects = getProjects();
@@ -14,10 +15,12 @@ function addButtonListeners() {
     const newProjBtn = document.querySelector('#btn-new-project');
     const editProjBtn = document.querySelector('#btn-edit-project');
     const submitTodoBtn = document.querySelector('#btn-submit-todo');
+    const editTodoBtn = document.querySelector('#btn-edit-todo');
 
     newProjBtn.addEventListener('click', displayNewProjectForm);
     editProjBtn.addEventListener('click', displayEditProjectForm);
-    submitTodoBtn.addEventListener('click', createTodo)
+    submitTodoBtn.addEventListener('click', createTodo);
+    editTodoBtn.addEventListener('click', editTodo);
 }
 
 function getActiveProject() {
@@ -214,35 +217,62 @@ function addProjectInfo(title, description) {
 }
 
 function displayTodo(todo) {
+    let todoItems = {
+        checkBox: document.createElement('input'),
+        title: document.createElement('span'),
+        description: document.createElement('span'),
+        dueDate: document.createElement('span')
+    }
     const rowElem = document.createElement('div');
     const wrapper = document.createElement('div');
-    const checkBox = document.createElement('input');
-    const title = document.createElement('span');
-    const description = document.createElement('span');
-    const dueDate = document.createElement('span');
-    
-    rowElem.classList.add('row');
-    wrapper.classList.add('col-11', 'd-flex', 'justify-content-center', 'align-items-center', 'flex-row', 'todo');
-    description.classList.add('flex-grow-1');
-    dueDate.classList.add('todo-date');
-
     wrapper.id = todo.id;
 
-    checkBox.type = "checkbox"
-    checkBox.name = 'todo-check';
+    if (!todo.active) {
+        wrapper.classList.add('todo-inactive')
+        todoItems.checkBox.checked = "true"
+    }
 
-    title.textContent = todo.title;
-    description.textContent = todo.description;
-    dueDate.textContent = todo.dueDate;
+    rowElem.classList.add('row');
+    wrapper.classList.add('col-11', 'd-flex', 'justify-content-center', 'align-items-center', 'flex-row', 'todo');
+    todoItems.checkBox.classList.add('todo-check');
+    todoItems.title.classList.add('todo-title')
+    todoItems.description.classList.add('flex-grow-1');
+    todoItems.dueDate.classList.add('todo-date');
 
-    wrapper.appendChild(checkBox);
-    wrapper.appendChild(title);
-    wrapper.appendChild(description);
-    wrapper.appendChild(dueDate);
+    todoItems.checkBox.type = "checkbox"
+    todoItems.checkBox.name = 'todo-check';
+    todoItems.checkBox.addEventListener('click', toggleTodoActive)
 
+    todoItems.title.textContent = todo.title;
+    todoItems.description.textContent = todo.description;
+    todoItems.dueDate.textContent = format(todo.dueDate, 'dd-MM-yyyy');
+
+    for (const element in todoItems) {
+        addElementInfo(todoItems[element])
+        wrapper.appendChild(todoItems[element]);
+    }
     rowElem.appendChild(wrapper);
 
     return rowElem;
+}
+
+function addElementInfo(element) {
+    if (element.tagName === "INPUT"){
+        return
+    }
+    element.dataset.bsToggle = "modal";
+    element.dataset.bsTarget = "#todo-modal";
+    element.addEventListener('click', displayTodoEdit);
+}
+
+function toggleTodoActive(event) {
+    const project = getActiveProject();
+    const todoId = event.target.parentElement.id;
+    const todo = project.getTodo(todoId);
+
+    todo.toggleActive();
+    clearTodos();
+    addTodos(project.todos);
 }
 
 function addTodos(todos) {
@@ -267,6 +297,7 @@ function createTodoBtn() {
     todoBtn.textContent = "Add Todo";
     todoBtn.dataset.bsToggle = "modal";
     todoBtn.dataset.bsTarget = "#todo-modal";
+    todoBtn.addEventListener('click', clearModalForm);
 
     btnWrapper.appendChild(todoBtn);
 
@@ -282,12 +313,79 @@ function createTodo() {
     addTodos(project.todos);
 }
 
+function editTodo() {
+    const todoInfo = getTodoInfo();
+    const project = getActiveProject();
+    const todoId = document.querySelector('#btn-edit-todo').dataset.todoId;
+    const todo = project.getTodo(todoId);
+
+    todo.updateTodo(todoInfo);
+    clearTodos();
+    addTodos(project.todos);
+}
+
+function displayTodoEdit(event) {
+    const project = getActiveProject();
+    const todoId = event.target.parentElement.id;
+    const todo = project.getTodo(todoId);
+    const editTodoBtn = document.querySelector('#btn-edit-todo');
+
+    editTodoBtn.dataset.todoId = todo.id;
+
+    fillModalForm(todo)
+}
+
+
+// This part is ugly
+// don't look at me like that
+function fillModalForm(todo) {
+    const modalTitle = document.querySelector('#modal-title');
+    const titleInput = document.querySelector('#todo-title');
+    const descInput = document.querySelector('#todo-description');
+    const priorityInput = document.querySelector('#todo-priority');
+    const dateInput = document.querySelector('#todo-date');
+    const editTodoBtn = document.querySelector('#btn-edit-todo');
+    const submitTodoBtn = document.querySelector('#btn-submit-todo');
+    const formattedDate = format(todo.dueDate, 'yyyy-MM-dd');
+
+    modalTitle.textContent = "Edit Todo";
+    
+    editTodoBtn.classList.remove('hidden');
+    submitTodoBtn.classList.add('hidden');
+
+    titleInput.value = todo.title;
+    descInput.value = todo.description;
+    priorityInput.value = parseInt(todo.priority);
+    dateInput.value = formattedDate;
+}
+
+function clearModalForm() {
+    const modalTitle = document.querySelector('#modal-title');
+    const titleInput = document.querySelector('#todo-title');
+    const descInput = document.querySelector('#todo-description');
+    const priorityInput = document.querySelector('#todo-priority');
+    const dateInput = document.querySelector('#todo-date');
+    const editTodoBtn = document.querySelector('#btn-edit-todo');
+    const submitTodoBtn = document.querySelector('#btn-submit-todo');;
+
+    modalTitle.textContent = "New Todo";
+    
+    editTodoBtn.classList.add('hidden');
+    submitTodoBtn.classList.remove('hidden');
+
+    titleInput.value = null;
+    descInput.value = null;
+    priorityInput.value = null;
+    dateInput.value = null;
+    
+}
+
 function getTodoInfo() {
     const todoInfo = {
         title: document.querySelector('#todo-title').value,
         description: document.querySelector('#todo-description').value,
         priority: document.querySelector('#todo-priority').value,
-        dueDate: document.querySelector('#todo-date').value
+        dueDate: parseISO(document.querySelector('#todo-date').value)
     }
     return todoInfo;
 }
